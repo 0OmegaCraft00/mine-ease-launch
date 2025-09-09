@@ -9,6 +9,8 @@ interface Translations {
   browse: string;
   version: string;
   selectVersion: string;
+  loader: string;
+  selectLoader: string;
   resourceManagement: string;
   ramAllocation: string;
   cpuCores: string;
@@ -37,6 +39,8 @@ const translations: Record<Language, Translations> = {
     browse: 'Browse',
     version: 'Version',
     selectVersion: 'Select Version',
+    loader: 'Server Type',
+    selectLoader: 'Select Server Type',
     resourceManagement: 'Resource Management',
     ramAllocation: 'RAM Allocation',
     cpuCores: 'CPU Cores',
@@ -62,6 +66,8 @@ const translations: Record<Language, Translations> = {
     browse: 'Tallózás',
     version: 'Verzió',
     selectVersion: 'Verzió Kiválasztása',
+    loader: 'Szerver Típus',
+    selectLoader: 'Szerver Típus Kiválasztása',
     resourceManagement: 'Erőforrás Kezelés',
     ramAllocation: 'RAM Foglalás',
     cpuCores: 'CPU Magok',

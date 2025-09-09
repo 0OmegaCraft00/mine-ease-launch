@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { ServerStatus, ServerStatusType } from '@/components/ServerStatus';
 import { ResourceSlider } from '@/components/ResourceSlider';
 import { VersionSelector } from '@/components/VersionSelector';
+import { LoaderSelector, ServerLoader } from '@/components/LoaderSelector';
 import { useLanguage, Language } from '@/contexts/LanguageContext';
 import { Play, Square, FolderOpen, Cpu, HardDrive, Monitor, Globe } from 'lucide-react';
 import minesosLogo from '@/assets/minesos-logo.png';
@@ -15,6 +16,7 @@ export const MinesOSLauncher = () => {
   const [serverStatus, setServerStatus] = useState<ServerStatusType>('offline');
   const [serverPath, setServerPath] = useState('/home/user/minecraft-server');
   const [selectedVersion, setSelectedVersion] = useState('1.21.4');
+  const [selectedLoader, setSelectedLoader] = useState<ServerLoader>('vanilla');
   const [ramAllocation, setRamAllocation] = useState(4);
   const [cpuCores, setCpuCores] = useState(4);
 
@@ -89,6 +91,11 @@ export const MinesOSLauncher = () => {
                   </Button>
                 </div>
               </div>
+              
+              <LoaderSelector
+                value={selectedLoader}
+                onChange={setSelectedLoader}
+              />
               
               <VersionSelector 
                 value={selectedVersion}
