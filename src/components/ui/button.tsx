@@ -17,6 +17,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         // Gaming variants
         gaming: "bg-gradient-primary text-primary-foreground hover:shadow-glow transition-all duration-300 font-semibold",
+        "gaming-primary": "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg transition-all font-semibold",
         "gaming-success": "bg-gradient-success text-accent-foreground hover:shadow-success-glow transition-all duration-300 font-semibold",
         "gaming-danger": "bg-gaming-danger text-destructive-foreground hover:bg-gaming-danger/90 transition-all duration-300 font-semibold",
         "gaming-surface": "bg-gaming-surface-elevated border border-border text-foreground hover:bg-gaming-surface hover:shadow-elevated transition-all duration-300",

@@ -29,6 +29,38 @@ interface Translations {
   serverStarting: string;
   serverRunning: string;
   serverStopping: string;
+  // Search pages
+  backToLauncher: string;
+  modrinthSearch: string;
+  curseforgeSearch: string;
+  pluginSearch: string;
+  searchMods: string;
+  searchPlugins: string;
+  category: string;
+  allCategories: string;
+  utility: string;
+  technology: string;
+  worldGeneration: string;
+  magic: string;
+  equipment: string;
+  administration: string;
+  protection: string;
+  economy: string;
+  permissions: string;
+  mcVersion: string;
+  allVersions: string;
+  sortBy: string;
+  lastUpdated: string;
+  name: string;
+  compatibility: string;
+  allPlatforms: string;
+  by: string;
+  downloads: string;
+  install: string;
+  noResults: string;
+  compatibleWith: string;
+  modBrowser: string;
+  pluginBrowser: string;
 }
 
 const translations: Record<Language, Translations> = {
@@ -58,6 +90,37 @@ const translations: Record<Language, Translations> = {
     serverStarting: 'Server is starting...',
     serverRunning: 'Server is running',
     serverStopping: 'Server is stopping...',
+    backToLauncher: 'Back to Launcher',
+    modrinthSearch: 'Modrinth Mods',
+    curseforgeSearch: 'CurseForge Mods',
+    pluginSearch: 'Plugin Browser',
+    searchMods: 'Search mods...',
+    searchPlugins: 'Search plugins...',
+    category: 'Category',
+    allCategories: 'All Categories',
+    utility: 'Utility',
+    technology: 'Technology',
+    worldGeneration: 'World Generation',
+    magic: 'Magic',
+    equipment: 'Equipment',
+    administration: 'Administration',
+    protection: 'Protection',
+    economy: 'Economy',
+    permissions: 'Permissions',
+    mcVersion: 'MC Version',
+    allVersions: 'All Versions',
+    sortBy: 'Sort By',
+    lastUpdated: 'Last Updated',
+    name: 'Name',
+    compatibility: 'Compatibility',
+    allPlatforms: 'All Platforms',
+    by: 'by',
+    downloads: 'downloads',
+    install: 'Install',
+    noResults: 'No results found',
+    compatibleWith: 'Compatible with',
+    modBrowser: 'Mod Browser',
+    pluginBrowser: 'Plugin Browser',
   },
   hu: {
     appTitle: 'MinesOS Indító',
@@ -85,6 +148,37 @@ const translations: Record<Language, Translations> = {
     serverStarting: 'A szerver indul...',
     serverRunning: 'A szerver fut',
     serverStopping: 'A szerver leáll...',
+    backToLauncher: 'Vissza az Indítóhoz',
+    modrinthSearch: 'Modrinth Modok',
+    curseforgeSearch: 'CurseForge Modok',
+    pluginSearch: 'Plugin Böngésző',
+    searchMods: 'Modok keresése...',
+    searchPlugins: 'Pluginok keresése...',
+    category: 'Kategória',
+    allCategories: 'Minden Kategória',
+    utility: 'Segédprogram',
+    technology: 'Technológia',
+    worldGeneration: 'Világ Generálás',
+    magic: 'Mágia',
+    equipment: 'Felszerelés',
+    administration: 'Adminisztráció',
+    protection: 'Védelem',
+    economy: 'Gazdaság',
+    permissions: 'Jogosultságok',
+    mcVersion: 'MC Verzió',
+    allVersions: 'Minden Verzió',
+    sortBy: 'Rendezés',
+    lastUpdated: 'Utoljára Frissítve',
+    name: 'Név',
+    compatibility: 'Kompatibilitás',
+    allPlatforms: 'Minden Platform',
+    by: 'által',
+    downloads: 'letöltések',
+    install: 'Telepítés',
+    noResults: 'Nincs találat',
+    compatibleWith: 'Kompatibilis',
+    modBrowser: 'Mod Böngésző',
+    pluginBrowser: 'Plugin Böngésző',
   },
 };
 

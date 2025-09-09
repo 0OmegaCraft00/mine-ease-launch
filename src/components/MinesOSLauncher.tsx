@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +9,7 @@ import { ResourceSlider } from '@/components/ResourceSlider';
 import { VersionSelector } from '@/components/VersionSelector';
 import { LoaderSelector, ServerLoader } from '@/components/LoaderSelector';
 import { useLanguage, Language } from '@/contexts/LanguageContext';
-import { Play, Square, FolderOpen, Cpu, HardDrive, Monitor, Globe } from 'lucide-react';
+import { Play, Square, FolderOpen, Cpu, HardDrive, Monitor, Globe, Package, Puzzle } from 'lucide-react';
 import minesosLogo from '@/assets/minesos-logo.png';
 
 export const MinesOSLauncher = () => {
@@ -41,6 +42,10 @@ export const MinesOSLauncher = () => {
   };
 
   const gpuInfo = 'NVIDIA RTX 4070 - 12GB VRAM';
+
+  // Check if current loader supports mods or plugins
+  const supportsModBrowsing = ['neoforge', 'forge', 'fabric', 'quilt'].includes(selectedLoader);
+  const supportsPluginBrowsing = ['bukkit', 'spigot', 'mohist', 'arclight', 'waterfall', 'bungeecord'].includes(selectedLoader);
 
   return (
     <div className="min-h-screen bg-gradient-hero p-6">
@@ -101,6 +106,41 @@ export const MinesOSLauncher = () => {
                 value={selectedVersion}
                 onChange={setSelectedVersion}
               />
+
+              {/* Mod/Plugin Browser Buttons */}
+              {(supportsModBrowsing || supportsPluginBrowsing) && (
+                <div className="pt-4 border-t border-border space-y-2">
+                  <label className="text-sm font-medium text-foreground block">
+                    {supportsModBrowsing ? t.modBrowser : t.pluginBrowser}
+                  </label>
+                  <div className="flex gap-2">
+                    {supportsModBrowsing && (
+                      <>
+                        <Link to="/modrinth" className="flex-1">
+                          <Button variant="gaming-outline" size="sm" className="w-full gap-2">
+                            <Package className="w-4 h-4" />
+                            Modrinth
+                          </Button>
+                        </Link>
+                        <Link to="/curseforge" className="flex-1">
+                          <Button variant="gaming-outline" size="sm" className="w-full gap-2">
+                            <Package className="w-4 h-4" />
+                            CurseForge
+                          </Button>
+                        </Link>
+                      </>
+                    )}
+                    {supportsPluginBrowsing && (
+                      <Link to="/plugins" className="flex-1">
+                        <Button variant="gaming-outline" size="sm" className="w-full gap-2">
+                          <Puzzle className="w-4 h-4" />
+                          {t.pluginBrowser}
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
