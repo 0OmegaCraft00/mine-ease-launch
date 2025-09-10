@@ -9,6 +9,7 @@ export type ServerLoader =
   | 'quilt'
   | 'bukkit'
   | 'spigot'
+  | 'paper'
   | 'waterfall'
   | 'bungeecord'
   | 'mohist'
@@ -23,6 +24,7 @@ const SERVER_LOADERS: { value: ServerLoader; label: string; description: string 
   { value: 'quilt', label: 'Quilt', description: 'Fork of Fabric with improvements' },
   { value: 'bukkit', label: 'Bukkit', description: 'Plugin-based server' },
   { value: 'spigot', label: 'Spigot', description: 'High performance Bukkit fork' },
+  { value: 'paper', label: 'Paper', description: 'High performance Spigot fork' },
   { value: 'waterfall', label: 'Waterfall', description: 'BungeeCord fork for proxy servers' },
   { value: 'bungeecord', label: 'BungeeCord', description: 'Proxy server for multiple servers' },
   { value: 'mohist', label: 'Mohist', description: 'Bukkit + Forge hybrid server' },

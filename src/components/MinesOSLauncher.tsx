@@ -9,31 +9,89 @@ import { ResourceSlider } from '@/components/ResourceSlider';
 import { VersionSelector } from '@/components/VersionSelector';
 import { LoaderSelector, ServerLoader } from '@/components/LoaderSelector';
 import { useLanguage, Language } from '@/contexts/LanguageContext';
+import { useServerManager } from '@/hooks/useServerManager';
 import { Play, Square, FolderOpen, Cpu, HardDrive, Monitor, Globe, Package, Puzzle } from 'lucide-react';
 import minesosLogo from '@/assets/minesos-logo.png';
 
 export const MinesOSLauncher = () => {
   const { t, language, setLanguage } = useLanguage();
-  const [serverStatus, setServerStatus] = useState<ServerStatusType>('offline');
-  const [serverPath, setServerPath] = useState('/home/user/minecraft-server');
-  const [selectedVersion, setSelectedVersion] = useState('1.21.4');
-  const [selectedLoader, setSelectedLoader] = useState<ServerLoader>('vanilla');
-  const [ramAllocation, setRamAllocation] = useState(4);
-  const [cpuCores, setCpuCores] = useState(4);
+  const {
+    status,
+    config,
+    javaVersions,
+    logs,
+    configureServer,
+    startServer,
+    stopServer,
+    selectDirectory,
+    getServerJars
+  } = useServerManager();
+  
+  const [serverPath, setServerPath] = useState(config?.serverPath || '');
+  const [selectedVersion, setSelectedVersion] = useState(config?.version || '1.21.4');
+  const [selectedLoader, setSelectedLoader] = useState<ServerLoader>(config?.loader || 'vanilla');
+  const [selectedJava, setSelectedJava] = useState(config?.javaVersion || '21');
+  const [ramAllocation, setRamAllocation] = useState(config?.ramAllocation || 4);
+  const [cpuCores, setCpuCores] = useState(config?.cpuCores || 4);
+  const [availableJars, setAvailableJars] = useState<string[]>([]);
 
-  const handleLaunch = () => {
-    if (serverStatus === 'offline') {
-      setServerStatus('starting');
-      // Simulate server startup
-      setTimeout(() => setServerStatus('running'), 2000);
+  const handleDirectorySelect = async () => {
+    try {
+      const path = await selectDirectory();
+      if (path) {
+        setServerPath(path);
+        const jars = await getServerJars(path);
+        setAvailableJars(jars);
+      }
+    } catch (error) {
+      console.error('Failed to select directory:', error);
+      alert('Failed to select directory. Please try again.');
     }
   };
 
-  const handleStop = () => {
-    if (serverStatus === 'running') {
-      setServerStatus('stopping');
-      // Simulate server shutdown
-      setTimeout(() => setServerStatus('offline'), 1500);
+  const handleLaunch = async () => {
+    if (!serverPath) {
+      alert('Please select a server directory first');
+      return;
+    }
+
+    if (availableJars.length === 0) {
+      alert('No server JAR files found in the selected directory');
+      return;
+    }
+
+    try {
+      const serverConfig = {
+        serverPath,
+        serverJar: availableJars[0], // Use first available JAR
+        loader: selectedLoader as any,
+        version: selectedVersion,
+        javaVersion: selectedJava as any,
+        ramAllocation,
+        cpuCores,
+        serverPort: 25565,
+        maxPlayers: 20,
+        difficulty: 'normal' as const,
+        gamemode: 'survival' as const,
+        onlineMode: true,
+        whitelist: false,
+        motd: 'A Minecraft Server powered by MinesOS'
+      };
+
+      await configureServer(serverConfig);
+      await startServer();
+    } catch (error) {
+      console.error('Failed to launch server:', error);
+      alert(`Failed to launch server: ${error}`);
+    }
+  };
+
+  const handleStop = async () => {
+    try {
+      await stopServer();
+    } catch (error) {
+      console.error('Failed to stop server:', error);
+      alert('Failed to stop server. Please try again.');
     }
   };
 
@@ -66,7 +124,7 @@ export const MinesOSLauncher = () => {
               <Globe className="w-4 h-4" />
               {language.toUpperCase()}
             </Button>
-            <ServerStatus status={serverStatus} />
+            <ServerStatus status={status} />
           </div>
         </div>
 
@@ -91,7 +149,7 @@ export const MinesOSLauncher = () => {
                     className="bg-gaming-surface-elevated border-border text-foreground flex-1"
                     placeholder="/path/to/server"
                   />
-                  <Button variant="gaming-outline" size="sm">
+                  <Button variant="gaming-outline" size="sm" onClick={handleDirectorySelect}>
                     {t.browse}
                   </Button>
                 </div>
@@ -105,6 +163,9 @@ export const MinesOSLauncher = () => {
               <VersionSelector 
                 value={selectedVersion}
                 onChange={setSelectedVersion}
+                javaVersion={selectedJava}
+                onJavaChange={setSelectedJava}
+                availableJavaVersions={javaVersions}
               />
 
               {/* Mod/Plugin Browser Buttons */}
@@ -193,7 +254,7 @@ export const MinesOSLauncher = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex flex-col gap-3">
-                {serverStatus === 'offline' && (
+                {status === 'offline' && (
                   <Button 
                     variant="gaming-success" 
                     size="xl" 
@@ -205,13 +266,13 @@ export const MinesOSLauncher = () => {
                   </Button>
                 )}
                 
-                {serverStatus === 'starting' && (
+                {status === 'starting' && (
                   <Button variant="gaming-outline" size="xl" disabled className="w-full">
                     {t.starting}...
                   </Button>
                 )}
                 
-                {serverStatus === 'running' && (
+                {status === 'running' && (
                   <Button 
                     variant="gaming-danger" 
                     size="xl" 
@@ -223,7 +284,7 @@ export const MinesOSLauncher = () => {
                   </Button>
                 )}
                 
-                {serverStatus === 'stopping' && (
+                {status === 'stopping' && (
                   <Button variant="gaming-outline" size="xl" disabled className="w-full">
                     {t.stopping}...
                   </Button>
@@ -233,13 +294,13 @@ export const MinesOSLauncher = () => {
               <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-primary">
-                    {serverStatus === 'running' ? '24' : '0'}
+                    {status === 'running' ? '24' : '0'}
                   </div>
                   <div className="text-xs text-muted-foreground">Players</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-accent">
-                    {serverStatus === 'running' ? '19.2' : '0'}
+                    {status === 'running' ? '19.2' : '0'}
                   </div>
                   <div className="text-xs text-muted-foreground">TPS</div>
                 </div>
@@ -248,9 +309,29 @@ export const MinesOSLauncher = () => {
           </Card>
         </div>
 
+        {/* Server Console */}
+        {logs.length > 0 && (
+          <Card className="bg-gaming-surface border-border shadow-elevated">
+            <CardHeader>
+              <CardTitle className="text-foreground">Server Console</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-black/20 rounded-lg p-4 h-48 overflow-y-auto font-mono text-sm">
+                {logs.map((log, index) => (
+                  <div key={index} className="text-gaming-text-muted mb-1">
+                    {log}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Footer */}
-        <div className="text-center text-muted-foreground text-sm">
+        <div className="text-center text-muted-foreground text-sm space-y-2">
           <p>MinesOS Launcher v1.0.0 • {t.language}: {language === 'en' ? 'English' : 'Magyar'}</p>
+          {serverPath && <p>Server: {serverPath}</p>}
+          {availableJars.length > 0 && <p>JARs: {availableJars.join(', ')}</p>}
         </div>
       </div>
     </div>
