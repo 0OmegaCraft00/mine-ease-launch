@@ -9,6 +9,7 @@ import { ModrinthSearch } from "./pages/ModrinthSearch";
 import { CurseForgeSearch } from "./pages/CurseForgeSearch";
 import { CraftBukkitSearch } from "./pages/CraftBukkitSearch";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import ServerManagement from "./pages/ServerManagement";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/server/:id" element={<ServerManagement />} />
             <Route path="/modrinth" element={<ModrinthSearch />} />
             <Route path="/curseforge" element={<CurseForgeSearch />} />
             <Route path="/plugins" element={<CraftBukkitSearch />} />
