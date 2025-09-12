@@ -8,9 +8,12 @@ import { ServerStatus, ServerStatusType } from '@/components/ServerStatus';
 import { ResourceSlider } from '@/components/ResourceSlider';
 import { VersionSelector } from '@/components/VersionSelector';
 import { LoaderSelector, ServerLoader } from '@/components/LoaderSelector';
+import { ModpackImporter, ModpackInfo } from '@/components/ModpackImporter';
+import { JavaInstaller } from '@/components/JavaInstaller';
 import { useLanguage, Language } from '@/contexts/LanguageContext';
 import { useServerManager } from '@/hooks/useServerManager';
-import { Play, Square, FolderOpen, Cpu, HardDrive, Monitor, Globe, Package, Puzzle } from 'lucide-react';
+import { JavaVersion } from '@/types/server';
+import { Play, Square, FolderOpen, Cpu, HardDrive, Monitor, Globe, Package, Puzzle, Coffee, Upload, Settings } from 'lucide-react';
 import minesosLogo from '@/assets/minesos-logo.png';
 
 export const MinesOSLauncher = () => {
@@ -34,6 +37,8 @@ export const MinesOSLauncher = () => {
   const [ramAllocation, setRamAllocation] = useState(config?.ramAllocation || 4);
   const [cpuCores, setCpuCores] = useState(config?.cpuCores || 4);
   const [availableJars, setAvailableJars] = useState<string[]>([]);
+  const [showModpackImporter, setShowModpackImporter] = useState(false);
+  const [showJavaInstaller, setShowJavaInstaller] = useState(false);
 
   const handleDirectorySelect = async () => {
     try {
@@ -99,6 +104,31 @@ export const MinesOSLauncher = () => {
     setLanguage(language === 'en' ? 'hu' : 'en');
   };
 
+  const handleModpackImport = async (modpackInfo: ModpackInfo, installPath: string) => {
+    try {
+      // In real implementation, would create server directory and install modpack
+      console.log('Importing modpack:', modpackInfo, 'to', installPath);
+      setServerPath(installPath);
+      setSelectedLoader(modpackInfo.loader as any);
+      setSelectedVersion(modpackInfo.minecraftVersion);
+      
+      // Simulate JAR detection after modpack import
+      setAvailableJars([`${modpackInfo.loader}-${modpackInfo.minecraftVersion}.jar`]);
+    } catch (error) {
+      throw new Error(`Failed to import modpack: ${error}`);
+    }
+  };
+
+  const handleJavaInstall = async (version: any) => {
+    // Simulate Java installation
+    console.log('Installing Java version:', version);
+  };
+
+  const handleJavaUninstall = async (version: any) => {
+    // Simulate Java uninstallation
+    console.log('Uninstalling Java version:', version);
+  };
+
   const gpuInfo = 'NVIDIA RTX 4070 - 12GB VRAM';
 
   // Check if current loader supports mods or plugins
@@ -107,7 +137,7 @@ export const MinesOSLauncher = () => {
 
   return (
     <div className="min-h-screen bg-gradient-hero p-6">
-      <div className="max-w-6xl mx-auto space-y-6">
+      <div className="max-w-6xl mx-auto space-y-6 animate-fade-in">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -115,6 +145,24 @@ export const MinesOSLauncher = () => {
             <h1 className="text-3xl font-bold text-foreground">{t.appTitle}</h1>
           </div>
           <div className="flex items-center gap-3">
+            <Button 
+              variant="gaming-outline" 
+              size="sm" 
+              onClick={() => setShowJavaInstaller(true)}
+              className="gap-2"
+            >
+              <Coffee className="w-4 h-4" />
+              Java Manager
+            </Button>
+            <Button 
+              variant="gaming-outline" 
+              size="sm" 
+              onClick={() => setShowModpackImporter(true)}
+              className="gap-2"
+            >
+              <Upload className="w-4 h-4" />
+              Import Modpack
+            </Button>
             <Button 
               variant="gaming-outline" 
               size="sm" 
@@ -130,7 +178,7 @@ export const MinesOSLauncher = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Server Configuration */}
-          <Card className="bg-gaming-surface border-border shadow-elevated">
+          <Card className="bg-gaming-surface border-border shadow-elevated animate-slide-in-right" style={{ animationDelay: '0.1s' }}>
             <CardHeader>
               <CardTitle className="text-foreground flex items-center gap-2">
                 <FolderOpen className="w-5 h-5 text-primary" />
@@ -206,7 +254,7 @@ export const MinesOSLauncher = () => {
           </Card>
 
           {/* Resource Management */}
-          <Card className="bg-gaming-surface border-border shadow-elevated">
+          <Card className="bg-gaming-surface border-border shadow-elevated animate-slide-in-right" style={{ animationDelay: '0.2s' }}>
             <CardHeader>
               <CardTitle className="text-foreground flex items-center gap-2">
                 <Cpu className="w-5 h-5 text-accent" />
@@ -245,7 +293,7 @@ export const MinesOSLauncher = () => {
           </Card>
 
           {/* Server Control */}
-          <Card className="bg-gaming-surface border-border shadow-elevated">
+          <Card className="bg-gaming-surface border-border shadow-elevated animate-slide-in-right" style={{ animationDelay: '0.3s' }}>
             <CardHeader>
               <CardTitle className="text-foreground flex items-center gap-2">
                 <HardDrive className="w-5 h-5 text-gaming-success" />
@@ -311,7 +359,7 @@ export const MinesOSLauncher = () => {
 
         {/* Server Console */}
         {logs.length > 0 && (
-          <Card className="bg-gaming-surface border-border shadow-elevated">
+          <Card className="bg-gaming-surface border-border shadow-elevated animate-fade-in" style={{ animationDelay: '0.5s' }}>
             <CardHeader>
               <CardTitle className="text-foreground">Server Console</CardTitle>
             </CardHeader>
@@ -328,11 +376,33 @@ export const MinesOSLauncher = () => {
         )}
 
         {/* Footer */}
-        <div className="text-center text-muted-foreground text-sm space-y-2">
+        <div className="text-center text-muted-foreground text-sm space-y-2 animate-fade-in" style={{ animationDelay: '0.6s' }}>
           <p>MinesOS Launcher v1.0.0 • {t.language}: {language === 'en' ? 'English' : 'Magyar'}</p>
           {serverPath && <p>Server: {serverPath}</p>}
           {availableJars.length > 0 && <p>JARs: {availableJars.join(', ')}</p>}
         </div>
+
+        {/* Modals */}
+        <ModpackImporter
+          isOpen={showModpackImporter}
+          onClose={() => setShowModpackImporter(false)}
+          onImport={handleModpackImport}
+        />
+
+        <JavaInstaller
+          isOpen={showJavaInstaller}
+          onClose={() => setShowJavaInstaller(false)}
+          availableVersions={['8', '16', '17', '21']}
+          installedVersions={javaVersions.map((version, index) => ({
+            version: version as JavaVersion,
+            path: `/usr/lib/jvm/java-${version}`,
+            vendor: 'Adoptium',
+            architecture: 'x64',
+            isInstalled: true
+          }))}
+          onInstall={handleJavaInstall}
+          onUninstall={handleJavaUninstall}
+        />
       </div>
     </div>
   );

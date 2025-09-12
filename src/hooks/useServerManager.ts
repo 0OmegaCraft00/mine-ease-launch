@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ServerManager } from '@/services/ServerManager';
+import { RealServerManager } from '@/services/RealServerManager';
 import { FileSystemService } from '@/services/FileSystemService';
 import { JavaService } from '@/services/JavaService';
 import { ProcessService } from '@/services/ProcessService';
@@ -10,13 +11,15 @@ export const useServerManager = () => {
     const fileSystem = new FileSystemService();
     const java = new JavaService(fileSystem, new ProcessService());
     const process = new ProcessService();
-    return new ServerManager(fileSystem, java, process);
+    return new RealServerManager(fileSystem, java, process);
   });
   
   const [status, setStatus] = useState<ServerStatus>('offline');
   const [config, setConfig] = useState<ServerConfig | null>(null);
   const [javaVersions, setJavaVersions] = useState<JavaVersion[]>([]);
   const [logs, setLogs] = useState<string[]>([]);
+  const [installProgress, setInstallProgress] = useState<number>(0);
+  const [installStatus, setInstallStatus] = useState<string>('');
 
   useEffect(() => {
     // Initialize Java detection
@@ -85,15 +88,53 @@ export const useServerManager = () => {
     }
   }, [serverManager]);
 
+  const installServer = useCallback(async (config: ServerConfig) => {
+    try {
+      await serverManager.installServer(config, (progress, status) => {
+        setInstallProgress(progress);
+        setInstallStatus(status);
+      });
+    } catch (error) {
+      throw error;
+    }
+  }, [serverManager]);
+
+  const installModpack = useCallback(async (modpackFile: File, installPath: string) => {
+    try {
+      const config = await serverManager.installModpack(modpackFile, installPath, (progress, status) => {
+        setInstallProgress(progress);
+        setInstallStatus(status);
+      });
+      setConfig(config);
+      return config;
+    } catch (error) {
+      throw error;
+    }
+  }, [serverManager]);
+
+  const startServerWithInstallation = useCallback(async () => {
+    try {
+      await serverManager.startServerWithInstallation();
+      setStatus('running');
+    } catch (error) {
+      throw error;
+    }
+  }, [serverManager]);
+
   return {
     status,
     config,
     javaVersions,
     logs,
+    installProgress,
+    installStatus,
     configureServer,
     startServer,
     stopServer,
     selectDirectory,
-    getServerJars
+    getServerJars,
+    installServer,
+    installModpack,
+    startServerWithInstallation
   };
 };

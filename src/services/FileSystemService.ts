@@ -101,10 +101,11 @@ export class FileSystemService {
   async getAppDataPath(): Promise<string> {
     const isWindows = navigator.platform.toLowerCase().includes('win');
     
+    // Browser compatibility fix - can't access process.env directly
     if (isWindows) {
-      return process.env.APPDATA || 'C:\\Users\\Default\\AppData\\Roaming';
+      return 'C:\\Users\\Default\\AppData\\Roaming';
     } else {
-      return process.env.HOME + '/.local/share' || '/tmp';
+      return '/tmp';
     }
   }
 
